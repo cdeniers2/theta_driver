@@ -1,5 +1,19 @@
 #include "theta_driver/theta_driver_lib.hpp"
 
+std::string GetStringTime() {
+    // current date/time based on current system
+    time_t now = time(0);
+
+    // convert now to string form
+    tm* ltm = localtime(&now);
+
+    std::string dt = std::to_string(ltm->tm_mday) + "." + std::to_string(1 + ltm->tm_mon)
+                     + "." + std::to_string(1900 + ltm->tm_year) + ", " + std::to_string(ltm->tm_hour)
+                     + ":" + std::to_string(ltm->tm_min) + ":" + std::to_string(ltm->tm_sec);
+
+    return dt;
+}
+
 namespace {
 theta_driver::gst_src gsrc;
 }
@@ -57,6 +71,7 @@ GstFlowReturn new_sample_callback(GstAppSink* sink, gpointer data) {
     gst_buffer_map(app_buffer, &map, GST_MAP_WRITE);
 
     ThetaDriver* driver = static_cast<ThetaDriver*>(data);
+    RCLCPP_INFO_STREAM(driver->get_logger(), GetStringTime() << " Logging publishImage Call");
     driver->publishImage(map);
 
     gst_sample_unref(sample);
