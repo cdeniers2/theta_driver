@@ -129,7 +129,9 @@ ThetaDriver::~ThetaDriver() {
 }
 
 void ThetaDriver::onInit() {
-    image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("image_raw", 1);
+    rclcpp::QoS camera_qos_profile(1);
+    camera_qos_profile.best_effort();
+    image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("image_raw",camera_qos_profile);
 
     declare_parameter<bool>("use4k", false);
     get_parameter("use4k", use4k_);
